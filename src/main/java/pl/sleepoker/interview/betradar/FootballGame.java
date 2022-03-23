@@ -1,5 +1,7 @@
 package pl.sleepoker.interview.betradar;
 
+import java.util.Objects;
+
 public class FootballGame {
 
     private final String homeTeamName;
@@ -10,6 +12,19 @@ public class FootballGame {
         this.homeTeamName = homeTeamName;
         this.awayTeamName = awayTeamName;
         this.score = new Score();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        FootballGame that = (FootballGame) o;
+        return homeTeamName.equals(that.homeTeamName) && awayTeamName.equals(that.awayTeamName);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(homeTeamName, awayTeamName);
     }
 
     public Score getScore() {
@@ -29,6 +44,19 @@ public class FootballGame {
         public Score(int homeTeam, int awayTeam) {
             this.homeTeam = homeTeam;
             this.awayTeam = awayTeam;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            Score score = (Score) o;
+            return homeTeam == score.homeTeam && awayTeam == score.awayTeam;
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(homeTeam, awayTeam);
         }
     }
 }
