@@ -11,13 +11,13 @@ import pl.sleepoker.interview.betradar.FootballGame.Score;
 import pl.sleepoker.interview.betradar.FootballGame.Team;
 import pl.sleepoker.interview.betradar.exception.ScoreBoardException;
 
-import java.time.Instant;
 import java.util.List;
 import java.util.stream.Stream;
 
 import static java.time.Instant.parse;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.BDDMockito.then;
 import static pl.sleepoker.interview.betradar.GameStatus.FINISHED;
 
 public class FootballWorldCupScoreBoardTest {
@@ -178,7 +178,7 @@ public class FootballWorldCupScoreBoardTest {
                         new FootballGame("Spain", "Brazil", new Score(10, 2), FINISHED, parse("2022-03-25T10:00:00Z")),
                         new FootballGame("Germany", "France", new Score(2, 2), FINISHED, parse("2022-03-26T10:00:00Z")),
                         new FootballGame("Uruguay", "Italy", new Score(6, 6), FINISHED, parse("2022-03-27T10:00:00Z")),
-                        new FootballGame("Argentina", "Australia", new Score(3, 1), FINISHED, parse("2022-03-24T10:00:00Z"))
+                        new FootballGame("Argentina", "Australia", new Score(3, 1), FINISHED, parse("2022-03-28T10:00:00Z"))
                 )
         );
         // When
@@ -187,10 +187,13 @@ public class FootballWorldCupScoreBoardTest {
         FootballGame previous = actualSummary.get(0);
         for (int i = 1; i < actualSummary.size(); i++) {
             FootballGame next = actualSummary.get(i);
-            boolean isSorted = previous.getTotal() >= next.getTotal() || previous.getCreated().isAfter(next.getCreated());
+            boolean isSorted = previous.getTotal() > next.getTotal() ||
+                    (previous.getTotal().equals(next.getTotal()) && previous.getCreated().isAfter(next.getCreated()));
             assertTrue(isSorted);
             previous = next;
         }
+
+        then(gameRepositoryMock).should().findAll();
     }
 
     static Stream<Arguments> invalidFootballTeamNames() {

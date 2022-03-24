@@ -33,7 +33,7 @@ public class FootballGame {
         this.gameStatus = GameStatus.FINISHED;
     }
 
-    public int getTotal() {
+    public Integer getTotal() {
         return getScore().getHomeTeam() + getScore().getAwayTeam();
     }
 

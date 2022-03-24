@@ -7,3 +7,6 @@ are pretty similar.
 3) AC-3. For the full score update, decided to update both running match and already completed match. Since
 as far as I know, there is possibility we would need this (mistake during live, maybe some super rare decisions
 during WorldCup, etc.). But for the separate score of away or home team, decided to go only for Live matches.
+4) Normally would make all the tests using Repository mocks, but since it was in memory collection, it was a bit faster
+to go leave them. Only last test was mocked.
+5) AC-4 decided, that in summary we would only need info about completed matches.

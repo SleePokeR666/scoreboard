@@ -4,6 +4,7 @@ import pl.sleepoker.interview.betradar.FootballGame.Score;
 import pl.sleepoker.interview.betradar.FootballGame.Team;
 import pl.sleepoker.interview.betradar.exception.ScoreBoardException;
 
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -12,6 +13,7 @@ import java.util.Optional;
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 import static java.util.Optional.ofNullable;
+import static java.util.stream.Collectors.toList;
 import static org.apache.commons.lang3.StringUtils.isAnyBlank;
 import static org.apache.commons.lang3.StringUtils.join;
 
@@ -84,8 +86,12 @@ public class FootballWorldCupScoreBoard {
     }
 
     public List<FootballGame> getSummary() {
-        // TODO
-        return null;
+        List<FootballGame> allGames = gameRepository.findAll();
+        Comparator<FootballGame> byTotalDesc = Comparator.comparing(FootballGame::getTotal).reversed();
+        Comparator<FootballGame> byCreatedDateDesc = Comparator.comparing(FootballGame::getCreated).reversed();
+        return allGames.stream()
+                .sorted(byTotalDesc.thenComparing(byCreatedDateDesc))
+                .collect(toList());
     }
 
     public Optional<FootballGame> find(String homeTeamName, String awayTeamName) {
