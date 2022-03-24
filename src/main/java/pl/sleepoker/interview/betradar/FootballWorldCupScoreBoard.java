@@ -36,6 +36,10 @@ public class FootballWorldCupScoreBoard {
         }
     }
 
+    public void finishGame(String homeTeamName, String awayTeamName) {
+        //  TODO
+    }
+
     public Optional<FootballGame> find(String homeTeamName, String awayTeamName) {
         return ofNullable(gamesInProgressMap.get(getKey(homeTeamName, awayTeamName)));
     }

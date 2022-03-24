@@ -56,6 +56,41 @@ public class FootballWorldCupScoreBoardTest {
         assertThrows(ScoreBoardException.class, underTest);
     }
 
+    @Test
+    public void whenFinishGameThenItHasFinishedStatus() {
+        // Given
+        String givenHomeTeamName = "home";
+        String givenAwayTeamName = "away";
+        scoreBoard.startGame(givenHomeTeamName, givenAwayTeamName);
+        // When
+        scoreBoard.finishGame(givenHomeTeamName, givenAwayTeamName);
+        // Then
+        var actualGame = scoreBoard.find(givenHomeTeamName, givenAwayTeamName).orElseThrow();
+        assertEquals(GameStatus.FINISHED, actualGame.getGameStatus());
+    }
+
+    @ParameterizedTest
+    @MethodSource("invalidFootballTeamNames")
+    public void whenTeamNameIsNotValidAndWeFinishGameThenThrow(String givenHomeTeamName, String givenAwayTeamName) {
+        // Given
+        scoreBoard.startGame(givenHomeTeamName, givenAwayTeamName);
+        // When
+        Executable underTest = () -> scoreBoard.finishGame(givenHomeTeamName, givenAwayTeamName);
+        // Then
+        assertThrows(ScoreBoardException.class, underTest);
+    }
+
+    @Test
+    public void whenFinishGameAndItIsNotInProgressThenThrow() {
+        // Given
+        String givenHomeTeamName = "home";
+        String givenAwayTeamName = "away";
+        // When
+        Executable underTest = () -> scoreBoard.finishGame(givenHomeTeamName, givenAwayTeamName);
+        // Then
+        assertThrows(ScoreBoardException.class, underTest);
+    }
+
     static Stream<Arguments> invalidFootballTeamNames() {
         return Stream.of(
                 Arguments.of(null, null),

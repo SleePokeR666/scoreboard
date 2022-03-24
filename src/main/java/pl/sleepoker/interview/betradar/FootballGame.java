@@ -7,6 +7,7 @@ public class FootballGame {
     private final String homeTeamName;
     private final String awayTeamName;
     private final Score score;
+    private GameStatus gameStatus;
 
     public FootballGame(String homeTeamName, String awayTeamName) {
         this.homeTeamName = homeTeamName;
@@ -29,6 +30,10 @@ public class FootballGame {
 
     public Score getScore() {
         return score;
+    }
+
+    public GameStatus getGameStatus() {
+        return gameStatus;
     }
 
     public static class Score {
