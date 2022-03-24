@@ -1,5 +1,6 @@
 package pl.sleepoker.interview.betradar;
 
+import pl.sleepoker.interview.betradar.FootballGame.Score;
 import pl.sleepoker.interview.betradar.exception.ScoreBoardException;
 
 import java.util.HashMap;
@@ -50,6 +51,14 @@ public class FootballWorldCupScoreBoard {
         gameRepository.save(game);
     }
 
+    public void updateScore(String homeTeamName, String awayTeamName, Score score) {
+        // TODO
+    }
+
+    public void updateTeamScore(String homeTeamName, String awayTeamName, Team team) {
+        // TODO
+    }
+
     public Optional<FootballGame> find(String homeTeamName, String awayTeamName) {
         String key = getKey(homeTeamName, awayTeamName);
         return ofNullable(gamesInProgressMap.get(key))
@@ -65,6 +74,10 @@ public class FootballWorldCupScoreBoard {
             String message = String.format("Can't %s the game. At least one team has invalid name.", operation);
             throw new ScoreBoardException(message);
         }
+    }
+
+    enum Team {
+        HOME, AWAY
     }
 
 }
