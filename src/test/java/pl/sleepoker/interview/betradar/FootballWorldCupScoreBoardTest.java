@@ -7,7 +7,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import pl.sleepoker.interview.betradar.FootballGame.Score;
-import pl.sleepoker.interview.betradar.FootballWorldCupScoreBoard.Team;
+import pl.sleepoker.interview.betradar.FootballGame.Team;
 import pl.sleepoker.interview.betradar.exception.ScoreBoardException;
 
 import java.util.stream.Stream;

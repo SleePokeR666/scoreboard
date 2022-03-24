@@ -6,7 +6,7 @@ public class FootballGame {
 
     private final String homeTeamName;
     private final String awayTeamName;
-    private final Score score;
+    private Score score;
     private GameStatus gameStatus;
 
     public FootballGame(String homeTeamName, String awayTeamName) {
@@ -49,10 +49,15 @@ public class FootballGame {
         return gameStatus;
     }
 
+    public void setScore(Score score) {
+        this.score = score;
+    }
+
+
     public static class Score {
 
-        private final int homeTeam;
-        private final int awayTeam;
+        private int homeTeam;
+        private int awayTeam;
 
         public Score() {
             this.homeTeam = 0;
@@ -62,6 +67,13 @@ public class FootballGame {
         public Score(int homeTeam, int awayTeam) {
             this.homeTeam = homeTeam;
             this.awayTeam = awayTeam;
+        }
+
+        public void score(Team team) {
+            switch (team) {
+                case HOME -> homeTeam++;
+                case AWAY -> awayTeam++;
+            }
         }
 
         @Override
@@ -76,5 +88,9 @@ public class FootballGame {
         public int hashCode() {
             return Objects.hash(homeTeam, awayTeam);
         }
+    }
+
+    enum Team {
+        HOME, AWAY
     }
 }

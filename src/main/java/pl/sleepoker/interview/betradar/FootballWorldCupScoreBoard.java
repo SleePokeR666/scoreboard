@@ -1,12 +1,14 @@
 package pl.sleepoker.interview.betradar;
 
 import pl.sleepoker.interview.betradar.FootballGame.Score;
+import pl.sleepoker.interview.betradar.FootballGame.Team;
 import pl.sleepoker.interview.betradar.exception.ScoreBoardException;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
+import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 import static java.util.Optional.ofNullable;
 import static org.apache.commons.lang3.StringUtils.isAnyBlank;
@@ -49,14 +51,35 @@ public class FootballWorldCupScoreBoard {
         game.complete();
 
         gameRepository.save(game);
+        gamesInProgressMap.remove(key);
     }
 
     public void updateScore(String homeTeamName, String awayTeamName, Score score) {
-        // TODO
+        checkTeamNames(homeTeamName, awayTeamName, "update");
+
+        String key = getKey(homeTeamName, awayTeamName);
+        var game = gamesInProgressMap.get(key);
+        if (nonNull(game)) {
+            game.setScore(score);
+            return;
+        }
+
+        game = gameRepository.get(key)
+                .orElseThrow(() -> new ScoreBoardException("Can't update game score. Game hasn't started yet"));
+        game.setScore(score);
+        gameRepository.save(game);
     }
 
     public void updateTeamScore(String homeTeamName, String awayTeamName, Team team) {
-        // TODO
+        checkTeamNames(homeTeamName, awayTeamName, "update");
+
+        String key = getKey(homeTeamName, awayTeamName);
+        var game = gamesInProgressMap.get(key);
+        if (isNull(game)) {
+            throw new ScoreBoardException("Can't update game score. Game is not in progress.");
+        }
+
+        game.getScore().score(team);
     }
 
     public Optional<FootballGame> find(String homeTeamName, String awayTeamName) {
@@ -74,10 +97,6 @@ public class FootballWorldCupScoreBoard {
             String message = String.format("Can't %s the game. At least one team has invalid name.", operation);
             throw new ScoreBoardException(message);
         }
-    }
-
-    enum Team {
-        HOME, AWAY
     }
 
 }
