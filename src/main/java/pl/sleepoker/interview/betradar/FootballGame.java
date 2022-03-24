@@ -1,6 +1,9 @@
 package pl.sleepoker.interview.betradar;
 
+import java.time.Instant;
 import java.util.Objects;
+
+import static java.time.Instant.now;
 
 public class FootballGame {
 
@@ -8,16 +11,30 @@ public class FootballGame {
     private final String awayTeamName;
     private Score score;
     private GameStatus gameStatus;
+    private Instant created;
 
     public FootballGame(String homeTeamName, String awayTeamName) {
         this.homeTeamName = homeTeamName;
         this.awayTeamName = awayTeamName;
         this.score = new Score();
         this.gameStatus = GameStatus.IN_PROGRESS;
+        this.created = now();
+    }
+
+    public FootballGame(String homeTeamName, String awayTeamName, Score score, GameStatus gameStatus, Instant created) {
+        this.homeTeamName = homeTeamName;
+        this.awayTeamName = awayTeamName;
+        this.score = score;
+        this.gameStatus = gameStatus;
+        this.created = created;
     }
 
     public void complete() {
         this.gameStatus = GameStatus.FINISHED;
+    }
+
+    public int getTotal() {
+        return getScore().getHomeTeam() + getScore().getAwayTeam();
     }
 
     @Override
@@ -49,6 +66,10 @@ public class FootballGame {
         return gameStatus;
     }
 
+    public Instant getCreated() {
+        return created;
+    }
+
     public void setScore(Score score) {
         this.score = score;
     }
@@ -74,6 +95,14 @@ public class FootballGame {
                 case HOME -> homeTeam++;
                 case AWAY -> awayTeam++;
             }
+        }
+
+        public int getHomeTeam() {
+            return homeTeam;
+        }
+
+        public int getAwayTeam() {
+            return awayTeam;
         }
 
         @Override

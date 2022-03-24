@@ -6,14 +6,19 @@ import org.junit.jupiter.api.function.Executable;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.mockito.Mockito;
 import pl.sleepoker.interview.betradar.FootballGame.Score;
 import pl.sleepoker.interview.betradar.FootballGame.Team;
 import pl.sleepoker.interview.betradar.exception.ScoreBoardException;
 
+import java.time.Instant;
+import java.util.List;
 import java.util.stream.Stream;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static java.time.Instant.parse;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.BDDMockito.given;
+import static pl.sleepoker.interview.betradar.GameStatus.FINISHED;
 
 public class FootballWorldCupScoreBoardTest {
 
@@ -67,7 +72,7 @@ public class FootballWorldCupScoreBoardTest {
         scoreBoard.finishGame(givenHomeTeamName, givenAwayTeamName);
         // Then
         var actualGame = scoreBoard.find(givenHomeTeamName, givenAwayTeamName).orElseThrow();
-        assertEquals(GameStatus.FINISHED, actualGame.getGameStatus());
+        assertEquals(FINISHED, actualGame.getGameStatus());
     }
 
     @ParameterizedTest
@@ -159,6 +164,33 @@ public class FootballWorldCupScoreBoardTest {
         Executable underTest = () -> scoreBoard.updateTeamScore(givenHomeTeamName, givenAwayTeamName, givenTeamScore);
         // Then
         assertThrows(ScoreBoardException.class, underTest);
+    }
+
+    @Test
+    public void whenGetSummaryThenItShouldBeSortedByTotalScoreAndRecentDate() {
+        // Given
+        GameRepository gameRepositoryMock = Mockito.mock(GameRepository.class);
+        scoreBoard = new FootballWorldCupScoreBoard(gameRepositoryMock);
+
+        given(gameRepositoryMock.findAll()).willReturn(
+                List.of(
+                        new FootballGame("Mexico", "Canada", new Score(0, 5), FINISHED, parse("2022-03-24T10:00:00Z")),
+                        new FootballGame("Spain", "Brazil", new Score(10, 2), FINISHED, parse("2022-03-25T10:00:00Z")),
+                        new FootballGame("Germany", "France", new Score(2, 2), FINISHED, parse("2022-03-26T10:00:00Z")),
+                        new FootballGame("Uruguay", "Italy", new Score(6, 6), FINISHED, parse("2022-03-27T10:00:00Z")),
+                        new FootballGame("Argentina", "Australia", new Score(3, 1), FINISHED, parse("2022-03-24T10:00:00Z"))
+                )
+        );
+        // When
+        List<FootballGame> actualSummary = scoreBoard.getSummary();
+        // Then
+        FootballGame previous = actualSummary.get(0);
+        for (int i = 1; i < actualSummary.size(); i++) {
+            FootballGame next = actualSummary.get(i);
+            boolean isSorted = previous.getTotal() >= next.getTotal() || previous.getCreated().isAfter(next.getCreated());
+            assertTrue(isSorted);
+            previous = next;
+        }
     }
 
     static Stream<Arguments> invalidFootballTeamNames() {

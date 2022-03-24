@@ -1,8 +1,6 @@
 package pl.sleepoker.interview.betradar;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 import static java.util.Optional.ofNullable;
 import static org.apache.commons.lang3.StringUtils.join;
@@ -24,6 +22,10 @@ public class GameRepository {
 
     public Optional<FootballGame> get(String key) {
         return ofNullable(gameSummary.get(key));
+    }
+
+    public List<FootballGame> findAll() {
+        return new ArrayList<>(gameSummary.values());
     }
 
     private String getKey(String homeTeamName, String awayTeamName) {

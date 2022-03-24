@@ -5,6 +5,7 @@ import pl.sleepoker.interview.betradar.FootballGame.Team;
 import pl.sleepoker.interview.betradar.exception.ScoreBoardException;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -80,6 +81,11 @@ public class FootballWorldCupScoreBoard {
         }
 
         game.getScore().score(team);
+    }
+
+    public List<FootballGame> getSummary() {
+        // TODO
+        return null;
     }
 
     public Optional<FootballGame> find(String homeTeamName, String awayTeamName) {
