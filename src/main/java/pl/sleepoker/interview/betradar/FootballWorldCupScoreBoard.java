@@ -13,18 +13,18 @@ import static org.apache.commons.lang3.StringUtils.join;
 
 public class FootballWorldCupScoreBoard {
 
+    private final GameRepository gameRepository;
     private final Map<String, FootballGame> gamesInProgressMap;
 
     private static final String KEY_DELIMITER = "-";
 
-    public FootballWorldCupScoreBoard() {
+    public FootballWorldCupScoreBoard(GameRepository gameRepository) {
+        this.gameRepository = gameRepository;
         this.gamesInProgressMap = new HashMap<>();
     }
 
     public void startGame(String homeTeamName, String awayTeamName) {
-        if (isAnyBlank(homeTeamName, awayTeamName)) {
-            throw new ScoreBoardException("The game can't be started. At least one team has invalid name.");
-        }
+        checkTeamNames(homeTeamName, awayTeamName, "start");
 
         var inProgressGame = gamesInProgressMap.putIfAbsent(
                 getKey(homeTeamName, awayTeamName),
@@ -37,15 +37,34 @@ public class FootballWorldCupScoreBoard {
     }
 
     public void finishGame(String homeTeamName, String awayTeamName) {
-        //  TODO
+        checkTeamNames(homeTeamName, awayTeamName, "finish");
+
+        String key = getKey(homeTeamName, awayTeamName);
+        if (!gamesInProgressMap.containsKey(key)) {
+            throw new ScoreBoardException("Can't finish the game. It hasn't started yet or it is already completed.");
+        }
+
+        var game = gamesInProgressMap.get(key);
+        game.complete();
+
+        gameRepository.save(game);
     }
 
     public Optional<FootballGame> find(String homeTeamName, String awayTeamName) {
-        return ofNullable(gamesInProgressMap.get(getKey(homeTeamName, awayTeamName)));
+        String key = getKey(homeTeamName, awayTeamName);
+        return ofNullable(gamesInProgressMap.get(key))
+                .or(() -> gameRepository.get(key));
     }
 
     private String getKey(String homeTeamName, String awayTeamName) {
         return join(homeTeamName, KEY_DELIMITER, awayTeamName);
+    }
+
+    private void checkTeamNames(String homeTeamName, String awayTeamName, String operation) {
+        if (isAnyBlank(homeTeamName, awayTeamName)) {
+            String message = String.format("Can't %s the game. At least one team has invalid name.", operation);
+            throw new ScoreBoardException(message);
+        }
     }
 
 }

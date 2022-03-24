@@ -20,7 +20,7 @@ public class FootballWorldCupScoreBoardTest {
 
     @BeforeEach
     public void setup() {
-        scoreBoard = new FootballWorldCupScoreBoard();
+        scoreBoard = new FootballWorldCupScoreBoard(new GameRepository());
     }
 
     @Test
@@ -72,8 +72,6 @@ public class FootballWorldCupScoreBoardTest {
     @ParameterizedTest
     @MethodSource("invalidFootballTeamNames")
     public void whenTeamNameIsNotValidAndWeFinishGameThenThrow(String givenHomeTeamName, String givenAwayTeamName) {
-        // Given
-        scoreBoard.startGame(givenHomeTeamName, givenAwayTeamName);
         // When
         Executable underTest = () -> scoreBoard.finishGame(givenHomeTeamName, givenAwayTeamName);
         // Then

@@ -13,6 +13,11 @@ public class FootballGame {
         this.homeTeamName = homeTeamName;
         this.awayTeamName = awayTeamName;
         this.score = new Score();
+        this.gameStatus = GameStatus.IN_PROGRESS;
+    }
+
+    public void complete() {
+        this.gameStatus = GameStatus.FINISHED;
     }
 
     @Override
@@ -26,6 +31,14 @@ public class FootballGame {
     @Override
     public int hashCode() {
         return Objects.hash(homeTeamName, awayTeamName);
+    }
+
+    public String getHomeTeamName() {
+        return homeTeamName;
+    }
+
+    public String getAwayTeamName() {
+        return awayTeamName;
     }
 
     public Score getScore() {
